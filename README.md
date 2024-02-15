@@ -10,3 +10,5 @@ https://procesosnumericos2015.weebly.com/gauss-seidel.html
 http://blog.espol.edu.ec/analisisnumerico/gauss-seidel-metodo/
 
 http://blog.espol.edu.ec/analisisnumerico/gauss-seidel-ejemplo01/
+
+https://github.com/jnlh863/Gauss-Sidel/invitations
