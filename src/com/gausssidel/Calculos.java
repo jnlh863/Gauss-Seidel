@@ -6,22 +6,15 @@ public class Calculos {
     
     public static final int MAX_ITERACIONES = 100;
     
-    public boolean esDominante(double [][] matriz, int filas, int columnas){
+    public boolean esDominante(double [][] matriz, int filas){
         boolean[] Filasvisitadas = new boolean[matriz.length];
         int[] pivotes = new int[matriz.length];
         Arrays.fill(Filasvisitadas, false);
-        return hacerDominante(0, Filasvisitadas, pivotes, matriz, filas, columnas);
+        return hacerDominante(0, Filasvisitadas, pivotes, matriz, filas);
     }
     
-     public boolean hacerDominante(int indice, boolean[] filasvisitadas, int[] pivote, double [][] matriz,  int filas, int columnas){
+     public boolean hacerDominante(int indice, boolean[] filasvisitadas, int[] pivote, double [][] matriz,  int filas){
         int n = filas;
-        
-        double [][] original = new double[filas][columnas];
-        for (int i = 0; i < filas; i++) {
-            for (int j = 0; j < columnas; j++) {                   
-                original[i][j] = matriz[i][j];
-            }
-        }
 
         if (indice == filas) {
             double[][] T = new double[n][n + 1];
@@ -30,11 +23,6 @@ public class Calculos {
                     T[i][j] = matriz[pivote[i]][j];
             }
             matriz = T;
-            for (int i = 0; i < filas; i++) {
-                for (int j = 0; j < columnas; j++) {                   
-                    original[i][j] = matriz[i][j];
-                }
-            }
             return true;
         }
         
@@ -42,15 +30,19 @@ public class Calculos {
             if (filasvisitadas[i])
                 continue;
             double sum = 0;
-            for (int j = 0; j < n; j++)
-                sum += Math.abs(matriz[i][j]);
-            if (2 * Math.abs(matriz[i][indice]) > sum) {
+            for (int j = 0; j < n; j++){
+                if(i!=j){
+                    sum += Math.abs(matriz[i][j]);
+                }
+            }
+            if (Math.abs(matriz[i][indice]) > sum) {
                 filasvisitadas[i] = true;
                 pivote[indice] = i;
-                if (hacerDominante(indice + 1, filasvisitadas, pivote, original, filas,  columnas))
+                if (hacerDominante(indice + 1, filasvisitadas, pivote, matriz, filas))
                     return true;
                 filasvisitadas[i] = false;
             }
+            indice++;
         }
         return false;
     }
@@ -65,7 +57,7 @@ public class Calculos {
         StringBuilder aprox = new StringBuilder();
         String texto;
         while (true) {
-            for (int i = 0; i < n-1; i++) {
+            for (int i = 0; i < n; i++) {
                 double sum = matriz[i][n]; 
                 for (int j = 0; j < n; j++){
                     if (j != i){
@@ -75,11 +67,11 @@ public class Calculos {
                 aproximaciones[i] = 1 / matriz[i][i] * sum;
             }
 
-            for (int i = 0; i < n-1; i++){
-                texto = "Iteracion "+ iteraciones + "= x" + i + " : " +  aproximaciones[i] + " , ";
+            for (int i = 0; i < n; i++){
+                texto = "Iteración "+ iteraciones + " { x" + (i+1) + " : " +  aproximaciones[i] + " } , " + "\n";
                 aprox.append(texto);
             }
-            
+            aprox.append("________________________________________________________________________\n");
             
             iteraciones++;
             boolean stop = true;

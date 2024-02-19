@@ -1,11 +1,14 @@
 package com.gausssidel;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -82,8 +85,29 @@ public class MatrizValues extends javax.swing.JFrame {
         
         JTextArea resultados = new JTextArea();
         resultados.setBounds(310, (filas + 1) * 30 + 60, 400, 200);
-        add(resultados);
+        
+        JScrollPane scrollPane = new JScrollPane(resultados);
+        scrollPane.setBounds(310, (filas + 1) * 30 + 60, 400, 200);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        add(scrollPane);
+        
+        JLabel alertaNoD = new JLabel("");
+        alertaNoD.setForeground(Color.RED);
+        alertaNoD.setBounds(42, 280, 300, 20);
+        getContentPane().add(alertaNoD);
+        
+        JLabel alertaD = new JLabel("");
+        alertaD.setForeground(Color.RED);
+        alertaD.setBounds(42, 280, 300, 20);
+        getContentPane().add(alertaD);
 
+        JLabel error = new JLabel("");
+        error.setForeground(Color.RED);
+        error.setBounds(42, 280, 300, 20);
+        getContentPane().add(error);
+        
+        
         //Eventos de los botones
         calcular.addActionListener(new ActionListener() {
             @Override
@@ -97,46 +121,51 @@ public class MatrizValues extends javax.swing.JFrame {
                             matriz[i][j] = Double.parseDouble(celda[i][j].getText());
                         }
                     }
+                    if(!calculos.esDominante(matriz, filas)){
+                        alertaNoD.setText("El sistema no es diagonalmente dominante");
+                        error.setText("");
+                        alertaD.setText("");
+                    }else{
+                        alertaD.setText("El sistema si es diagonalmente dominante");
+                        error.setText("");
+                        alertaNoD.setText("");
 
-                    if(!calculos.esDominante(matriz, filas, columnas)){
-                        JLabel alerta = new JLabel("El sistema no es diagonalmente dominante");
-                        alerta.setForeground(Color.RED);
-                        alerta.setBounds(115, 280, 300, 20);
-                        getContentPane().add(alerta);
-                        validate();
-                        repaint();     
-                    };
+                        StringBuilder aprox = calculos.resolverSistemadeEcuaciones(matriz, tolerancia);
                     
-                   
-                    JLabel alerta = new JLabel("El sistema si es diagonalmente dominante");
-                    alerta.setForeground(Color.RED);
-                    alerta.setBounds(20, 280, 300, 20);
-                    getContentPane().add(alerta);
-                    validate();
-                    repaint(); 
+                        resultados.setText(aprox.toString());
+                    }
                     
-                    
-                    StringBuilder aprox = calculos.resolverSistemadeEcuaciones(matriz, tolerancia);
-                    
-                    resultados.setText(aprox.toString());
-
-                    //StringBuilder texto = new StringBuilder();
-                    //texto.append("Valor en [" + i + "][" + j + "]: " + valor + "\n");
-                    //resultados.setText(texto.toString());
-
                 }catch(Exception i){
-                    JLabel errorLabel = new JLabel("Advertencia: No letras, no carácteres alfanúmericos");
-                    errorLabel.setForeground(Color.RED);
-                    errorLabel.setBounds(115, 300, 300, 20);
-                    getContentPane().add(errorLabel);
-                    validate();
-                    repaint();
-
+                    error.setText("Valores no permitidos, intentelo de nuevo");
+                    alertaNoD.setText("");
+                    alertaD.setText("");
                 }
-
             }
          });
+        
+        
+        limpiar.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (int i = 0; i < filas; i++) {
+                    for (int j = 0; j < columnas; j++) {
+                        celda[i][j].setText("");
+                    }
+                }
+                
+                alertaNoD.setText("");
+                alertaD.setText("");
+                error.setText("");
+                
+                t.setText("");
+                
+                resultados.setText("");
+                
+            }
+
+        });
 }
+    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
