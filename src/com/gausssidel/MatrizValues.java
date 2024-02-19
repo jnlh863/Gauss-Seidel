@@ -91,23 +91,7 @@ public class MatrizValues extends javax.swing.JFrame {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         add(scrollPane);
-        
-        JLabel alertaNoD = new JLabel("");
-        alertaNoD.setForeground(Color.RED);
-        alertaNoD.setBounds(42, 280, 300, 20);
-        getContentPane().add(alertaNoD);
-        
-        JLabel alertaD = new JLabel("");
-        alertaD.setForeground(Color.RED);
-        alertaD.setBounds(42, 280, 300, 20);
-        getContentPane().add(alertaD);
 
-        JLabel error = new JLabel("");
-        error.setForeground(Color.RED);
-        error.setBounds(42, 280, 300, 20);
-        getContentPane().add(error);
-        
-        
         //Eventos de los botones
         calcular.addActionListener(new ActionListener() {
             @Override
@@ -115,20 +99,25 @@ public class MatrizValues extends javax.swing.JFrame {
                 try{
                     double [][] matriz = new double[filas][columnas];
                     Calculos calculos = new Calculos();  
-                    double tolerancia = Double.parseDouble(t.getText());
+                    
                     for (int i = 0; i < filas; i++) {
                         for (int j = 0; j < columnas; j++) {                   
                             matriz[i][j] = Double.parseDouble(celda[i][j].getText());
                         }
                     }
+                    
+                    if(t.getText().isEmpty()){
+                        displayErrorMessage("Tolerancia de error no especificada");
+                    }
+                    double tolerancia = Double.parseDouble(t.getText());
+                    
+                    
                     if(!calculos.esDominante(matriz, filas)){
-                        alertaNoD.setText("El sistema no es diagonalmente dominante");
-                        error.setText("");
-                        alertaD.setText("");
+                        displayErrorMessage("El sistema no es diagonalmente dominante");
+
                     }else{
-                        alertaD.setText("El sistema si es diagonalmente dominante");
-                        error.setText("");
-                        alertaNoD.setText("");
+                        displayErrorMessage("El sistema si es diagonalmente dominante");
+
 
                         StringBuilder aprox = calculos.resolverSistemadeEcuaciones(matriz, tolerancia);
                     
@@ -136,9 +125,8 @@ public class MatrizValues extends javax.swing.JFrame {
                     }
                     
                 }catch(Exception i){
-                    error.setText("Valores no permitidos, intentelo de nuevo");
-                    alertaNoD.setText("");
-                    alertaD.setText("");
+                    displayErrorMessage("Valores no permitidos, intentelo de nuevo");
+
                 }
             }
          });
@@ -152,10 +140,8 @@ public class MatrizValues extends javax.swing.JFrame {
                         celda[i][j].setText("");
                     }
                 }
-                
-                alertaNoD.setText("");
-                alertaD.setText("");
-                error.setText("");
+
+                clearErrorMessages();
                 
                 t.setText("");
                 
@@ -166,7 +152,27 @@ public class MatrizValues extends javax.swing.JFrame {
         });
 }
     
+    private void clearErrorMessages() {
+        Container contentPane = getContentPane();
+        Component[] components = contentPane.getComponents();
+        for (Component component : components) {
+            if (component instanceof JLabel && component.getBounds().y == 280) {
+                contentPane.remove(component);
+            }
+        }
+        validate();
+        repaint();
+    }
 
+    private void displayErrorMessage(String message) {
+        clearErrorMessages();
+        JLabel errorLabel = new JLabel(message);
+        errorLabel.setForeground(Color.RED);
+        errorLabel.setBounds(42, 280, 300, 20);
+        getContentPane().add(errorLabel);
+        validate();
+        repaint();
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
